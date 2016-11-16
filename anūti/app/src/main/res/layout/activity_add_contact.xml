@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="project.cse.anti.addContact">
+
+    <android.support.v7.widget.Toolbar
+
+        android:id="@+id/addContactToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+
+        android:theme="@style/MyMaterialTheme.Base">
+        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/addContactToolBar">
+
+        <RelativeLayout
+        android:id="@+id/Relativelay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/addContactToolBar"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/nameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name:"
+            style="@style/styleTextView" />
+
+        <EditText
+            android:id="@+id/editName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nameLabel"
+            android:inputType="text"
+            style="@style/styleEditText" />
+
+        <TextView
+            android:id="@+id/phoneLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone:"
+            style="@style/styleTextView"
+            android:layout_below="@+id/editName"/>
+
+        <EditText
+            android:id="@+id/editPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/phoneLabel"
+            style="@style/styleEditText"
+            android:maxLength="10"
+            android:inputType="phone" />
+
+           <TextView
+                android:id="@+id/defaultMessageLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Default Message:"
+                style="@style/styleTextView"
+                android:layout_below="@+id/editPhone"/>
+-->
+            <Switch
+                android:id="@+id/messageSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/editPhone"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/defaultMessageLabel"
+                android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/messageLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Message:"
+            style="@style/styleTextView"
+            android:layout_below="@+id/messageSwitch"
+            />
+
+        <TextView
+            android:id="@+id/emergencyMessage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/emergencyMessage"
+            android:layout_below="@+id/messageLabel"
+            android:visibility="visible"/>
+
+        <EditText
+            android:id="@+id/editMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/messageLabel"
+            style="@style/styleEditText"
+            android:visibility="gone"
+             />
+
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/editMessage"
+            style="@style/styleButton"
+            android:text="Save" />
+
+
+
+    </RelativeLayout>
+    </ScrollView>
+
+    </RelativeLayout>
+

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">anūti</string>
+    <string name="title_activity_one_fragment">OneFragment</string>
+    <string name="Loading">Loading .....</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_add_contact">addContact</string>
+    <string name="emergencyMessage">Hi, I am in an emergency. I need help as soon as possible. Please follow my Location:</string>
+    <string name="login_label">No account yet ? <b><u>Create one</u></b></string>
+    <string name="signup_label">Already a member? <b><u>Login</u></b></string>
+    <string name="title_activity_three_fragment">threeFragment</string>
+    <string name="drawer_open">Open Drawer</string>
+    <string name="drawer_close">Close Drawer</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
+</resources>
