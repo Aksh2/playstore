@@ -2,12 +2,16 @@ package project.cse.anti;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -16,6 +20,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.parse.CountCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -23,6 +29,8 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.util.regex.Pattern;
+
+import project.cse.anti.Utilities.Utilities;
 
 
 public class addContact extends AppCompatActivity {
@@ -41,6 +49,7 @@ public class addContact extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         if(getIntent().hasExtra("number")){
             num = getIntent().getExtras().getString("number");
@@ -66,6 +75,7 @@ public class addContact extends AppCompatActivity {
 
 
         }
+
 
 
 
@@ -119,8 +129,15 @@ public class addContact extends AppCompatActivity {
         mMessage=(EditText)findViewById(R.id.editMessage);
         saveButton=(Button)findViewById(R.id.button);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(addContact.this);
+        if(!prefs.getBoolean("addContactShowCase",false)) {
 
+            new Utilities(getApplicationContext()).createShowCaseView(this,new ViewTarget(R.id.button,this),"Adding the Contacts","\nFill all the details and press the save button to add contacts.\nYou have the option of choosing between default and customised alert messages.");
+            SharedPreferences.Editor editor= prefs.edit();
+            editor.putBoolean("addContactShowCase",true);
+            editor.commit();
 
+        }
 
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +198,10 @@ public class addContact extends AppCompatActivity {
 
 
     }
+
+
+
+
 
     public void saveContacts(){
         contacts.setName(mName.getText().toString());

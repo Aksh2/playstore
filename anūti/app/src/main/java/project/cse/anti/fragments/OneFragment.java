@@ -4,10 +4,15 @@ package project.cse.anti.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +22,23 @@ import android.view.ViewGroup;
 import project.cse.anti.ContactsDB;
 import project.cse.anti.ParseAdapter;
 import project.cse.anti.R;
+import project.cse.anti.Utilities.Utilities;
 import project.cse.anti.addContact;
 
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 
-import com.github.florent37.tutoshowcase.TutoShowcase;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+
+import static project.cse.anti.R.style.AppTheme;
 
 
 public class OneFragment extends Fragment {
@@ -56,6 +69,7 @@ public class OneFragment extends Fragment {
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         lv = (ListView)rootView.findViewById(R.id.listView1);
 
+    Target floatButton = new ViewTarget(R.id.fab,getActivity());
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -68,12 +82,6 @@ public class OneFragment extends Fragment {
             }
         });
 
-        TutoShowcase.from(getActivity())
-                .setContentView(R.layout.activity_one_fragment)
-                .on(R.id.fab)
-                .addCircle()
-                .withBorder()
-                .show();
 
 
 
@@ -149,6 +157,19 @@ public class OneFragment extends Fragment {
         contactsAdapter.loadObjects();
 
         return rootView;
+    }
+
+    public void onStart(){
+        super.onStart();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if(!prefs.getBoolean("oneFragmentShowCase",false)) {
+            new Utilities(getContext()).createShowCaseView(getActivity(), new ViewTarget(R.id.fab, getActivity()), "Add Contacts Button", "\n\nClick this button to add new contacts.\n\nThis will send emergency messages to the saved contacts during emergencies.\n\nOnce all the contacts are added shake to phone to send alerts.");
+           SharedPreferences.Editor editor= prefs.edit();
+           editor.putBoolean("oneFragmentShowCase",true);
+            editor.commit();
+
+        }
     }
 
 

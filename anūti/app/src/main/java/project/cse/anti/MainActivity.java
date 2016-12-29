@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -20,7 +21,11 @@ import android.location.Location;
 //import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.provider.Telephony;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -33,6 +38,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionBarPolicy;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -47,6 +53,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.realtime.internal.event.ObjectChangedDetails;
+import com.google.android.gms.games.quest.Quests;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
@@ -63,14 +71,18 @@ import com.parse.ParseUser;
 import com.squareup.seismic.ShakeDetector;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import project.cse.anti.R;
+import project.cse.anti.Utilities.Utilities;
 import project.cse.anti.fragments.OneFragment;
 import project.cse.anti.fragments.ThreeFragment;
 import project.cse.anti.fragments.TwoFragment;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 
 public class MainActivity extends AppCompatActivity implements com.google.android.gms.location.LocationListener,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener {
@@ -110,65 +122,69 @@ public class MainActivity extends AppCompatActivity implements com.google.androi
             ArrayList<String> listNames = new ArrayList<String>();
             ArrayList<String> listNumbers = new ArrayList<String>();
 
+            //TODO: remove this after testing
+            //Toast.makeText(MainActivity.this, "shake value: " + Utilities.signalExists(getApplicationContext()), Toast.LENGTH_SHORT).show();
 
-            if(mAccel > 25){
-               try {
-                   url = "https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude;
-                   Intent sendIntent = new Intent();
-                   sendIntent.setAction(Intent.ACTION_SEND);
-                   sendIntent.setPackage("com.whatsapp");
+            if(mAccel > 12) {
+               // Toast.makeText(MainActivity.this, "shake value: " + Utilities.signalExists(getApplicationContext()), Toast.LENGTH_SHORT).show();
+                try {
+                    url = "https://www.google.com/maps/dir/Current+Location/" + latitude + "," + longitude;
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.setPackage("com.whatsapp");
 
-                   sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.emergencyMessage) + "\n" + url);
-                   sendIntent.setType("text/plain");
-                   startActivity(sendIntent);
-               }
-               catch(Exception e){
-                   Toast.makeText(MainActivity.this, "Whatsapp is not available to send emergency messages.", Toast.LENGTH_SHORT).show();
-               }
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.emergencyMessage) + "\n" + url);
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "Whatsapp is not available to send emergency messages.", Toast.LENGTH_SHORT).show();
+                }
 
 
+                if (Utilities.signalExists(getApplicationContext())) {
+                    ParseQuery<ContactsDB> query = ContactsDB.getQuery();
+                    query.fromLocalDatastore();
+                    query.whereNotEqualTo("Message", " ");
+                    query.findInBackground(new FindCallback<ContactsDB>() {
+                        @Override
+                        public void done(List<ContactsDB> objects, ParseException e) {
+                            if (!isFinishing()) {
+                                for (int i = 0; i < objects.size(); i++) {
+                                    contacts = objects.get(i);
+                                    try {
+                                        String SENT = "SMS_SENT";
+                                        String DELIVERED = "SMS_DELIVERED";
 
-                ParseQuery<ContactsDB> query = ContactsDB.getQuery();
-                query.fromLocalDatastore();
-                query.whereNotEqualTo("Message", " ");
-                query.findInBackground(new FindCallback<ContactsDB>() {
-                    @Override
-                    public void done(List<ContactsDB> objects, ParseException e) {
-                        if (!isFinishing()) {
-                            for (int i = 0; i < objects.size(); i++) {
-                                contacts = objects.get(i);
-                                try {
-                                    String SENT = "SMS_SENT";
-                                    String DELIVERED = "SMS_DELIVERED";
+                                        SmsManager sms = SmsManager.getDefault();
+                                        PendingIntent sendPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(SENT), 0);
+                                        PendingIntent deliveryPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(DELIVERED), 0);
 
-                                    SmsManager sms = SmsManager.getDefault();
-                                    PendingIntent sendPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(SENT), 0);
-                                    PendingIntent deliveryPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(DELIVERED),0);
+                                        sms.sendTextMessage(contacts.getNumber(), null, contacts.getMessage() + "\n" + url, sendPI, deliveryPI);
 
-                                   sms.sendTextMessage(contacts.getNumber(), null, contacts.getMessage() + "\n" + url, sendPI, deliveryPI);
-                                    Toast.makeText(getApplicationContext(), "Sms sent successfully to"+contacts.getName(), Toast.LENGTH_SHORT).show();
+                                        //sendSms(MainActivity.this, getDefaultSim(MainActivity.this),contacts.getNumber(),null,contacts.getMessage(),sendPI,deliveryPI);
+                                        Toast.makeText(getApplicationContext(), "Sms sent successfully to " + contacts.getName(), Toast.LENGTH_SHORT).show();
+
+                                    } catch (Exception a) {
+                                        Toast.makeText(getApplicationContext(), "Sms failed to send: " + a.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
 
                                 }
-                                catch (Exception a){
-                                    Toast.makeText(getApplicationContext(), "Sms failed to send:"+a.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
+
+                            } else {
+                                Toast toast = Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT);
+                                toast.show();
+
 
                             }
-
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT);
-                            toast.show();
-
-
                         }
-                    }
 
-                });
-
+                    });
 
 
-
-
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Mobile Network is not available", Toast.LENGTH_SHORT).show();
+                }
             }
 
 
@@ -244,7 +260,28 @@ public class MainActivity extends AppCompatActivity implements com.google.androi
 
         setContentView(R.layout.activity_main);
 
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences getPrefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
+                boolean isFirstStart = getPrefs.getBoolean("firstStart",true);
+
+                if(isFirstStart){
+
+                    Intent i = new Intent(MainActivity.this,Intro.class);
+                    startActivity(i);
+
+                    SharedPreferences.Editor e = getPrefs.edit();
+
+                    e.putBoolean("firstStart",false);
+
+                    e.apply();
+                }
+            }
+        });
+
+        t.start();
 
         buildGoogleApiClient();
 
@@ -356,6 +393,83 @@ public class MainActivity extends AppCompatActivity implements com.google.androi
     private void setSupportActionBar(Toolbar toolbar) {
 
     }
+
+
+
+    }
+
+    public boolean sendSms(Context ctx,int simID, String toNum, String centerNum,String smsText, PendingIntent sentIntent, PendingIntent deliveryIntent){
+        String name;
+
+        try{
+            if(simID == 0){
+                name="isms";
+            }
+            else if(simID ==1){
+                name="isms2";
+            }
+            else{
+                throw new Exception("can not get service for the sim '" + simID + "',only 0,1 accepted as values");
+            }
+            Method method = Class.forName("android.os.ServiceManager").getDeclaredMethod("getService",String.class);
+            method.setAccessible(true);
+            Object param = method.invoke(null,name);
+
+            method = Class.forName("com.android.internal.telephony.ISms$Stub").getDeclaredMethod("asInterface", IBinder.class);
+            method.setAccessible(true);
+            Object stubObj = method.invoke(null,param);
+            if(Build.VERSION.SDK_INT < 18){
+                method = stubObj.getClass().getMethod("sendText",String.class,String.class,String.class,PendingIntent.class,PendingIntent.class);
+                method.invoke(stubObj, toNum, centerNum, smsText, sentIntent, deliveryIntent);
+
+            }
+            else{
+                method = stubObj.getClass().getMethod("sendText",String.class,String.class,String.class,PendingIntent.class,PendingIntent.class);
+                method.invoke(stubObj,ctx.getPackageName(),toNum,centerNum,smsText,sentIntent,deliveryIntent);
+            }
+            return true;
+        } catch (ClassNotFoundException e){
+            Log.e("SendSms","ClassNotFoundException: " + e.getMessage());
+        } catch (NoSuchMethodException e){
+            Log.e("SendSms","NoSuchMethodException: " + e.getMessage());
+        }
+        catch (InvocationTargetException e){
+            Log.e("SendSms","InvocationTargetException: " + e.getMessage());
+        }
+        catch (IllegalAccessException e){
+            Log.e("SendSms","IllegalAccessException: " + e.getMessage());
+        }
+        catch (Exception e){
+            Log.e("SendSms","Exception: " + e.getMessage());
+        }
+        return false;
+
+    }
+
+    public int getDefaultSim(Context context){
+
+        int defaultSimm = -1;
+
+        Object tm = context.getSystemService(Context.TELEPHONY_SERVICE);
+        Method method_getDefaultSim;
+
+
+        try{
+            method_getDefaultSim = tm.getClass().getDeclaredMethod("getDefaultSim");
+            method_getDefaultSim.setAccessible(true);
+            defaultSimm = (Integer) method_getDefaultSim.invoke(tm);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Method method_getSmsDefaultSim;
+        int smsDefaultSim=-1;
+        try{
+            method_getSmsDefaultSim = tm.getClass().getDeclaredMethod("getSmsDefaultSim");
+            smsDefaultSim = (Integer) method_getSmsDefaultSim.invoke(tm);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return smsDefaultSim;
     }
 
 }

@@ -1,15 +1,18 @@
 package project.cse.anti.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
 
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.location.LocationRequest;
 
 
@@ -64,7 +69,7 @@ public class TwoFragment extends Fragment implements LocationListener,
     Marker mCurrLocationMarker;
     SupportMapFragment mapFragment;
 
-    View view;
+    View view,mView;
 
     private static final int INITIAL_REQUEST=127;
     private static final int LOCATION_REQUEST=INITIAL_REQUEST+3;
@@ -79,17 +84,11 @@ public class TwoFragment extends Fragment implements LocationListener,
 
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*if(Utilities.isNetworkAvailable(getActivity())){
 
-        }
-        else
-        {
-            Snackbar snackbar = Snackbar.make(view,"Internet is not available",Snackbar.LENGTH_LONG);
-            snackbar.show();
-        }*/
     }
 
 
@@ -99,9 +98,6 @@ public class TwoFragment extends Fragment implements LocationListener,
 
         mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
-
 
         return view;
     }
@@ -152,45 +148,7 @@ public class TwoFragment extends Fragment implements LocationListener,
 
 
     }
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    public boolean checkLocationPermission(){
 
-        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)){
-                ActivityCompat.requestPermissions(getActivity(),new String[] {Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            else{
-                ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            return false;
-        }else
-        {
-            return true;
-        }
-    }
-
-
-    public void onRequestPermission(int requestCode, String permissions[],int[] grantResults){
-
-        switch (requestCode){
-            case MY_PERMISSIONS_REQUEST_LOCATION:{
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    // implement the respective fucntionality here
-                    if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-                        if(mGoogleApiClient==null){
-                            buildGoogleApiClient();
-                        }
-                        mGoogleMap.setMyLocationEnabled(true);
-                    }
-                }
-                else{
-                    Toast.makeText(getActivity(),"permission denied",Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-        }
-
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -289,4 +247,15 @@ public class TwoFragment extends Fragment implements LocationListener,
 
 
     }        */
+
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+
+
+    }
+
+
+
+
 }

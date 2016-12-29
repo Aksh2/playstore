@@ -18,3 +18,27 @@
 -keep class android.support.design.widget.** { *; }
 -keep interface android.support.design.widget.** { *; }
 -dontwarn android.support.design.**
+-dontwarn butterknife.internal.**
+-keep class **$$ViewInjector { *; }
+-keepnames class * { @butterknife.InjectView *;}
+-keep class com.fasterxml.jackson.databind.ObjectMapper {
+    public <methods>;
+    protected <methods>;
+}
+-keep class com.fasterxml.jackson.databind.ObjectWriter {
+    public ** writeValueAsString(**);
+}
+# Keep source file names, line numbers, and Parse class/method names for easier debugging
+-keepattributes SourceFile,LineNumberTable
+-keepnames class com.parse.** { *; }
+
+# Required for Parse
+-keepattributes *Annotation*
+-keepattributes Signature
+-dontwarn com.squareup.**
+-dontwarn okio.**
+-dontwarn android.net.SSLCertificateSocketFactory
+-dontwarn android.app.Notification
+-dontwarn com.facebook.*
+-dontwarn com.parse.*
+-dontwarn com.parse.ui.*

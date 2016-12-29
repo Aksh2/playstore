@@ -29,7 +29,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(ContactsDB.class);
         // Initialising parse
         Parse.initialize(getApplicationContext(), PARSE_APPLICATION_ID, PARSE_CLIENT_KEY);
-        Utilities utilities = new Utilities();
+        Utilities utilities = new Utilities(getApplicationContext());
 
         if(utilities.isNetworkAvailable(ParseApplication.this)){
 
