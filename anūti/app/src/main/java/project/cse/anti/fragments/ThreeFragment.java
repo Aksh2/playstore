@@ -90,8 +90,8 @@ public class ThreeFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        String[] names={"Women's Helpline","Police Control Room","Railway Helpline","Ambulance Helpline","AIDS Helpline","Fire Services"};
-        final String[] numbers={"181","100","1512","102","1097","101"};
+        String[] names={"Helpline for Women","Police Control Room","Railway Helpline","Emergency Services","Train Accident","Air Accident"};
+        final String[] numbers={"1091","100","1512","108","1072","1071"};
         View view = inflater.inflate(R.layout.activity_three_fragment, null, false);
 
         ListView lv =(ListView) view.findViewById(R.id.numberList);
