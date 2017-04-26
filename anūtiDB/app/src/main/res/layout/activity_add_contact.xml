@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="project.cse.anti.addContact">
+
+    <android.support.v7.widget.Toolbar
+
+        android:id="@+id/addContactToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+
+        android:theme="@style/MyMaterialTheme.Base">
+        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
+
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/addContactToolBar">
+
+    <RelativeLayout
+        android:id="@+id/Relativelay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/addContactToolBar"
+        android:padding="16dp">
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
+        app:hintTextAppearance="@style/styleHintText"
+        app:counterTextAppearance="@color/black"
+        app:counterEnabled="true"
+        app:counterMaxLength="15">
+
+        <EditText
+            android:id="@+id/editName"
+            android:maxLength="15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name:"
+            android:inputType="text"
+            style="@style/styleEditText" />
+
+     </android.support.design.widget.TextInputLayout>
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textContainer1"
+        android:layout_below="@+id/textContainer"
+        app:hintTextAppearance="@style/styleHintText"
+        android:textColorHint="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:counterTextAppearance="@color/black"
+        app:counterEnabled="true"
+        app:counterMaxLength="10">
+
+
+        <EditText
+            android:id="@+id/editPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="10"
+            android:hint="Phone:"
+             style="@style/styleEditText"
+            android:inputType="phone" />
+
+    </android.support.design.widget.TextInputLayout>
+
+           <TextView
+                android:id="@+id/defaultMessageLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Default Message:"
+                style="@style/styleTextView"
+                android:layout_below="@+id/textContainer1"/>
+
+           <Switch
+                android:id="@+id/messageSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textContainer1"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/defaultMessageLabel"
+                android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/messageLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Message:"
+            style="@style/styleTextView"
+            android:layout_below="@+id/messageSwitch"
+            />
+
+        <TextView
+            android:id="@+id/emergencyMessage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/emergencyMessage"
+            android:layout_below="@+id/messageLabel"
+            android:visibility="visible"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textContainer2"
+            android:layout_below="@+id/messageLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterTextAppearance="@color/black"
+            android:visibility="gone"
+            app:counterEnabled="true"
+            app:counterMaxLength="130">
+
+        <EditText
+            android:id="@+id/editMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/messageLabel"
+            android:maxLength="130"
+            style="@style/styleEditText"
+            android:visibility="gone"
+             />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/messageLabel"
+            style="@style/styleButton"
+            android:text="Save" />
+
+
+
+    </RelativeLayout>
+    </ScrollView>
+
+    </RelativeLayout>
+
